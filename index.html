@@ -2863,10 +2863,10 @@
       bottom: 16px;
       right: 16px;
       z-index: 6;
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
       background: rgba(5, 11, 30, 0.62);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -2875,35 +2875,61 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
-      transition: all 0.3s ease;
+      font-size: 1.05rem;
+      transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
     }
 
     .hero-sound-btn:hover {
       background: linear-gradient(135deg, var(--orange), var(--gold));
       border-color: transparent;
-      transform: scale(1.06);
+      transform: scale(1.08);
     }
 
-    /* Little "TAP FOR SOUND" nudge that fades when muted */
+    /* Pulsing attention ring while the video is muted */
+    .hero-sound-btn.attn {
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border-color: transparent;
+      animation: soundBtnPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes soundBtnPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(244, 124, 32, 0.55); }
+      70%  { box-shadow: 0 0 0 14px rgba(244, 124, 32, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 124, 32, 0); }
+    }
+
+    /* Prominent, clickable "TAP FOR SOUND" nudge shown while muted */
     .hero-sound-hint {
       position: absolute;
-      bottom: 22px;
-      right: 74px;
+      bottom: 24px;
+      right: 80px;
       z-index: 6;
-      background: rgba(5, 11, 30, 0.7);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      color: #fff;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
-      padding: 7px 12px;
-      border-radius: 20px;
+      padding: 10px 16px;
+      border-radius: 24px;
       white-space: nowrap;
-      animation: soundHintPulse 2.2s ease-in-out infinite;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(244, 124, 32, 0.45);
+      animation: soundHintPulse 1.8s ease-in-out infinite;
+    }
+
+    .hero-sound-hint::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      bottom: 16px;
+      width: 12px;
+      height: 12px;
+      background: var(--gold);
+      transform: rotate(45deg);
     }
 
     .hero-sound-hint.hidden {
@@ -2911,8 +2937,8 @@
     }
 
     @keyframes soundHintPulse {
-      0%, 100% { opacity: 0.55; transform: translateX(0); }
-      50% { opacity: 1; transform: translateX(-3px); }
+      0%, 100% { transform: translateY(0); box-shadow: 0 8px 24px rgba(244, 124, 32, 0.40); }
+      50%      { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(244, 124, 32, 0.6); }
     }
 
     .hero-center .hero-ctas {
@@ -3038,7 +3064,7 @@
               poster="assets/logo-new-full.png">
               <source src="assets/Brand_outro_logo_Animation.mp4" type="video/mp4">
             </video>
-            <span class="hero-sound-hint" id="soundHint">Tap for sound</span>
+            <span class="hero-sound-hint" id="soundHint"><i class="fas fa-volume-up"></i> Tap for sound</span>
             <button class="hero-sound-btn" id="soundBtn" type="button" aria-label="Toggle sound">
               <i class="fas fa-volume-up" id="soundIcon"></i>
             </button>
@@ -3856,14 +3882,19 @@
       video.playbackRate = PLAYBACK_RATE;
       video.addEventListener('loadedmetadata', function () { video.playbackRate = PLAYBACK_RATE; });
 
+      var soundEnabled = false;
+
       function setIcon() {
         if (!icon) return;
         icon.className = video.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+        // Pulse the button while muted to draw attention; calm once sound is on.
+        if (video.muted) { btn.classList.add('attn'); }
+        else { btn.classList.remove('attn'); }
       }
       function hideHint() { if (hint) hint.classList.add('hidden'); }
       function showHint() { if (hint) hint.classList.remove('hidden'); }
 
-      // ── Play only 2 times, then stop (pause on the last frame) ──
+      // ── Play only 2 times, then stop ──
       var MAX_PLAYS = 2;
       var playsDone = 0;
       var finished = false;
@@ -3876,14 +3907,37 @@
           video.playbackRate = PLAYBACK_RATE;
           video.play().catch(function () { });
         } else {
-          // Reached 3 plays — stop and mute so it's no longer distracting.
+          // Reached 2 plays — stop on the last frame.
           finished = true;
           video.pause();
-          video.muted = true;
-          hideHint();
+          if (soundEnabled) {
+            // They already heard it — stop quietly.
+            hideHint();
+          } else {
+            // Never heard sound — keep inviting a tap to replay WITH sound.
+            video.muted = true;
+            showHint();
+          }
           setIcon();
         }
       });
+
+      // Turn sound on. If the clip is already over, restart it from the top so
+      // the visitor hears it in full; otherwise just unmute in place.
+      function enableSound() {
+        soundEnabled = true;
+        video.muted = false;
+        video.volume = 1.0;
+        if (finished || video.ended) {
+          finished = false;
+          playsDone = 0;
+          video.currentTime = 0;
+        }
+        video.playbackRate = PLAYBACK_RATE;
+        video.play().catch(function () { });
+        hideHint();
+        setIcon();
+      }
 
       // Try to play WITH sound first (some browsers allow it).
       video.muted = false;
@@ -3893,6 +3947,7 @@
       if (attempt && typeof attempt.then === 'function') {
         attempt.then(function () {
           // Autoplay with sound succeeded.
+          soundEnabled = true;
           hideHint();
           setIcon();
         }).catch(function () {
@@ -3905,26 +3960,22 @@
       }
       setIcon();
 
-      // Toggle sound on button click.
-      btn.addEventListener('click', function () {
-        video.muted = !video.muted;
-        if (!video.muted) {
-          video.volume = 1.0;
-          video.play().catch(function () { });
-          hideHint();
-        }
-        setIcon();
+      // Sound button: when muted, turn sound on (restart if finished); else mute.
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (video.muted) { enableSound(); }
+        else { video.muted = true; setIcon(); }
       });
 
-      // First interaction anywhere on the page unmutes (honours "sound on").
+      // The "Tap for sound" pill also enables sound.
+      if (hint) {
+        hint.addEventListener('click', function (e) { e.stopPropagation(); enableSound(); });
+      }
+
+      // First interaction anywhere on the page unmutes — but only while the clip
+      // is still playing, so a stray click never restarts a finished clip.
       function unmuteOnce() {
-        if (!finished && video.muted) {
-          video.muted = false;
-          video.volume = 1.0;
-          video.play().catch(function () { });
-          hideHint();
-          setIcon();
-        }
+        if (!finished && video.muted) { enableSound(); }
         document.removeEventListener('click', unmuteOnce);
         document.removeEventListener('touchstart', unmuteOnce);
       }
