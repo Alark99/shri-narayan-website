@@ -3034,7 +3034,7 @@
         <!-- ═══ BRAND OUTRO VIDEO — centrepiece ═══ -->
         <div class="hero-video-frame" data-aos="zoom-in" data-aos-duration="900" data-aos-delay="150">
           <div class="hero-video-inner">
-            <video id="brandVideo" playsinline autoplay loop preload="auto"
+            <video id="brandVideo" playsinline autoplay preload="auto"
               poster="assets/logo-new-full.png">
               <source src="assets/Brand_outro_logo_Animation.mp4" type="video/mp4">
             </video>
@@ -3851,12 +3851,39 @@
       var hint = document.getElementById('soundHint');
       if (!video) return;
 
+      // Play the brand video slightly slower for a calmer, premium feel.
+      var PLAYBACK_RATE = 0.85;
+      video.playbackRate = PLAYBACK_RATE;
+      video.addEventListener('loadedmetadata', function () { video.playbackRate = PLAYBACK_RATE; });
+
       function setIcon() {
         if (!icon) return;
         icon.className = video.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
       }
       function hideHint() { if (hint) hint.classList.add('hidden'); }
       function showHint() { if (hint) hint.classList.remove('hidden'); }
+
+      // ── Play only 2 times, then stop (pause on the last frame) ──
+      var MAX_PLAYS = 2;
+      var playsDone = 0;
+      var finished = false;
+
+      video.addEventListener('ended', function () {
+        playsDone++;
+        if (playsDone < MAX_PLAYS) {
+          // Replay for the next round.
+          video.currentTime = 0;
+          video.playbackRate = PLAYBACK_RATE;
+          video.play().catch(function () { });
+        } else {
+          // Reached 3 plays — stop and mute so it's no longer distracting.
+          finished = true;
+          video.pause();
+          video.muted = true;
+          hideHint();
+          setIcon();
+        }
+      });
 
       // Try to play WITH sound first (some browsers allow it).
       video.muted = false;
@@ -3891,7 +3918,7 @@
 
       // First interaction anywhere on the page unmutes (honours "sound on").
       function unmuteOnce() {
-        if (video.muted) {
+        if (!finished && video.muted) {
           video.muted = false;
           video.volume = 1.0;
           video.play().catch(function () { });
