@@ -2209,20 +2209,54 @@
 
     /* Footer logo — premium white badge on navy footer */
     .footer-logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
+      display: inline-block;
       background: var(--white);
-      padding: 12px 22px 12px 12px;
-      border-radius: 16px;
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
-      margin-bottom: 20px;
+      padding: 24px 30px;
+      border-radius: 18px;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-logo::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--gold));
     }
 
     .footer-logo-img {
-      height: 56px;
-      width: auto;
+      width: 100%;
+      max-width: 210px;
+      height: auto;
+      display: block;
       object-fit: contain;
+    }
+
+    /* Brand block: logo + text + socials share the logo's width, centered */
+    .footer-brand {
+      display: block;
+      width: 270px;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .footer-brand .footer-logo {
+      display: block;
+    }
+
+    .footer-brand .footer-desc {
+      max-width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-brand .socials {
+      justify-content: center;
     }
 
     .flt-main {
@@ -3683,20 +3717,18 @@
     <div class="container">
       <div class="row g-5">
         <div class="col-lg-4">
-          <div class="footer-logo">
-            <img src="assets/logo-emblem.png" alt="Shri Narayan Tours & Travels" class="footer-logo-img">
-            <span>
-              <span class="flt-main">Shri Narayan</span>
-              <span class="flt-sub">Tours &amp; Travels</span>
-            </span>
-          </div>
-          <p class="footer-desc">Connecting Your Journey with Reliability &amp; Trust. Your premium travel partner
-            across Gujarat — pilgrimages to corporate travel.</p>
-          <div class="socials">
-            <a href="https://www.instagram.com/shri.narayan6267?igsh=MXU4MXd4enVvN3hsbA==" class="social-a"
-              target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://wa.me/919819107959" class="social-a" target="_blank"><i class="fab fa-whatsapp"></i></a>
-            <a href="mailto:info@shrinarayantourtravels.com" class="social-a"><i class="fas fa-envelope"></i></a>
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <img src="assets/logo-new-full.png" alt="Shri Narayan Tours & Travels" class="footer-logo-img">
+            </div>
+            <p class="footer-desc">Connecting Your Journey with Reliability &amp; Trust. Your premium travel partner
+              across Gujarat — pilgrimages to corporate travel.</p>
+            <div class="socials">
+              <a href="https://www.instagram.com/shri.narayan6267?igsh=MXU4MXd4enVvN3hsbA==" class="social-a"
+                target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="https://wa.me/919819107959" class="social-a" target="_blank"><i class="fab fa-whatsapp"></i></a>
+              <a href="mailto:info@shrinarayantourtravels.com" class="social-a"><i class="fas fa-envelope"></i></a>
+            </div>
           </div>
         </div>
         <div class="col-sm-6 col-lg-2">
