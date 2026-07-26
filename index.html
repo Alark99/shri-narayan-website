@@ -2955,17 +2955,6 @@
       animation: soundHintPulse 1.8s ease-in-out infinite;
     }
 
-    .hero-sound-hint::after {
-      content: '';
-      position: absolute;
-      right: -7px;
-      bottom: 16px;
-      width: 12px;
-      height: 12px;
-      background: var(--gold);
-      transform: rotate(45deg);
-    }
-
     .hero-sound-hint.hidden {
       display: none;
     }
@@ -3992,27 +3981,27 @@
       }
       setIcon();
 
-      // Sound button: when muted, turn sound on (restart if finished); else mute.
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (video.muted) { enableSound(); }
-        else { video.muted = true; setIcon(); }
-      });
+      // Tapping anywhere on the video area turns sound on (and replays if it
+      // already finished). Scoped to the video only — so page scrolling never
+      // affects it. Uses 'click', which a scroll gesture never fires.
+      var videoBox = video.closest('.hero-video-inner') || video.parentElement;
+      if (videoBox) {
+        videoBox.style.cursor = 'pointer';
+        videoBox.addEventListener('click', function () { enableSound(); });
+      }
 
       // The "Tap for sound" pill also enables sound.
       if (hint) {
         hint.addEventListener('click', function (e) { e.stopPropagation(); enableSound(); });
       }
 
-      // First interaction anywhere on the page unmutes — but only while the clip
-      // is still playing, so a stray click never restarts a finished clip.
-      function unmuteOnce() {
-        if (!finished && video.muted) { enableSound(); }
-        document.removeEventListener('click', unmuteOnce);
-        document.removeEventListener('touchstart', unmuteOnce);
-      }
-      document.addEventListener('click', unmuteOnce);
-      document.addEventListener('touchstart', unmuteOnce);
+      // The round button is an explicit mute/unmute toggle. stopPropagation
+      // keeps it from also triggering the video-area handler above.
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (video.muted) { enableSound(); }
+        else { video.muted = true; setIcon(); }
+      });
     })();
 
   </script>
