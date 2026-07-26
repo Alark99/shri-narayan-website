@@ -2888,6 +2888,16 @@
       }
     }
 
+    /* Very tall / portrait viewports (e.g. "Desktop site" on a phone):
+       don't force a full-height hero — it would leave large empty blue bands
+       above and below the content. Let the hero size to its content instead.
+       Real desktops (landscape) keep the full-height hero below. */
+    @media (max-aspect-ratio: 3 / 4) {
+      #hero {
+        min-height: auto;
+      }
+    }
+
     /* ══════════════════════════════════════════════════════════════
        DESKTOP NAVBAR HARDENING (≥992px)
        id-scoped + !important so it wins over any Bootstrap version /
