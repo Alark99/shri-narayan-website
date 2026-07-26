@@ -574,35 +574,48 @@
       color: var(--navy) !important;
       font-size: 0.68rem;
       font-weight: 600;
-      letter-spacing: 1.2px;
+      letter-spacing: 1.25px;
       text-transform: uppercase;
-      padding: 6px 9px !important;
-      transition: color 0.25s;
+      padding: 7px 10px !important;
+      transition: color 0.3s ease;
       position: relative;
       white-space: nowrap;
       text-decoration: none;
       display: block;
     }
 
-    .navbar-nav .nav-link:hover {
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
       color: var(--orange) !important;
     }
 
+    /* Elegant gold underline that grows from the centre */
     .navbar-nav .nav-link::after {
       content: '';
       position: absolute;
       bottom: 2px;
-      left: 9px;
-      right: 9px;
-      height: 1.5px;
-      background: var(--orange);
+      left: 10px;
+      right: 10px;
+      height: 2px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--gold));
       transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s;
+      transform-origin: center;
+      transition: transform 0.4s cubic-bezier(.22, .61, .36, 1);
     }
 
-    .navbar-nav .nav-link:hover::after {
+    .navbar-nav .nav-link:hover::after,
+    .navbar-nav .nav-link.active::after {
       transform: scaleX(1);
+    }
+
+    /* Subtle dimming of the other links when hovering the nav — focus effect */
+    .navbar-nav:hover .nav-link:not(:hover):not(.nav-wa) {
+      opacity: 0.6;
+    }
+
+    .navbar-nav .nav-link {
+      transition: color 0.3s ease, opacity 0.3s ease;
     }
 
     .nav-wa {
@@ -4206,6 +4219,33 @@
         fab.classList.toggle('raised', entries[0].isIntersecting);
       }, { threshold: 0 });
       io.observe(footer);
+    })();
+
+    // ── Nav scrollspy: highlight the current section's menu item ──
+    (function () {
+      var links = [].slice.call(document.querySelectorAll('.navbar-nav .nav-link'));
+      var map = {};
+      links.forEach(function (l) {
+        var href = l.getAttribute('href') || '';
+        if (href.charAt(0) === '#' && href.length > 1) { map[href.slice(1)] = l; }
+      });
+      var sections = Object.keys(map)
+        .map(function (id) { return document.getElementById(id); })
+        .filter(Boolean);
+      if (!sections.length || !('IntersectionObserver' in window)) return;
+
+      // Thin band across the middle of the viewport — the section crossing it
+      // is the "current" one.
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && map[e.target.id]) {
+            links.forEach(function (l) { l.classList.remove('active'); });
+            map[e.target.id].classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+      sections.forEach(function (s) { io.observe(s); });
     })();
 
   </script>
