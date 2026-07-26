@@ -1838,8 +1838,24 @@
     .credit-place {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       color: rgba(255, 255, 255, 0.32);
+    }
+
+    .credit-flag {
+      width: 19px;
+      height: 13px;
+      border-radius: 3px;
+      display: inline-block;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 2px 5px rgba(0, 0, 0, 0.45);
+    }
+
+    .credit-flag svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 3px;
     }
 
     @media (max-width: 767px) {
@@ -1868,6 +1884,12 @@
       font-size: 1.45rem;
       box-shadow: 0 6px 22px rgba(34, 197, 94, 0.45);
       animation: waPop 2.5s ease-in-out infinite;
+      transition: transform 0.45s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    /* Glide up when the footer is in view so it never covers the credit */
+    .wa-fab.raised {
+      transform: translateY(-96px);
     }
 
     @keyframes waPop {
@@ -3855,7 +3877,34 @@
             </span>
           </a>
           <span class="credit-sep"></span>
-          <span class="credit-place">Crafted in Ahmedabad 🇮🇳</span>
+          <span class="credit-place">Crafted in Ahmedabad
+            <span class="credit-flag" role="img" aria-label="India">
+              <svg viewBox="0 0 36 24" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="flagGloss" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#ffffff" stop-opacity="0.32"/>
+                    <stop offset="0.48" stop-color="#ffffff" stop-opacity="0.06"/>
+                    <stop offset="0.52" stop-color="#000000" stop-opacity="0"/>
+                    <stop offset="1" stop-color="#000000" stop-opacity="0.18"/>
+                  </linearGradient>
+                </defs>
+                <rect width="36" height="8" fill="#FF9933"/>
+                <rect y="8" width="36" height="8" fill="#FFFFFF"/>
+                <rect y="16" width="36" height="8" fill="#138808"/>
+                <g stroke="#0A3299" stroke-width="0.4" fill="none">
+                  <circle cx="18" cy="12" r="3"/>
+                  <line x1="15" y1="12" x2="21" y2="12"/>
+                  <line x1="18" y1="9" x2="18" y2="15"/>
+                  <line x1="15.4" y1="10.5" x2="20.6" y2="13.5"/>
+                  <line x1="20.6" y1="10.5" x2="15.4" y2="13.5"/>
+                  <line x1="16.5" y1="9.4" x2="19.5" y2="14.6"/>
+                  <line x1="19.5" y1="9.4" x2="16.5" y2="14.6"/>
+                </g>
+                <circle cx="18" cy="12" r="0.7" fill="#0A3299"/>
+                <rect width="36" height="24" fill="url(#flagGloss)"/>
+              </svg>
+            </span>
+          </span>
         </p>
       </div>
     </div>
@@ -4106,6 +4155,17 @@
         if (video.muted) { enableSound(); }
         else { video.muted = true; setIcon(); }
       });
+    })();
+
+    // ── Lift the WhatsApp button when the footer is in view (avoid overlap) ──
+    (function () {
+      var fab = document.querySelector('.wa-fab');
+      var footer = document.querySelector('footer');
+      if (!fab || !footer || !('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function (entries) {
+        fab.classList.toggle('raised', entries[0].isIntersecting);
+      }, { threshold: 0 });
+      io.observe(footer);
     })();
 
   </script>
