@@ -2864,12 +2864,27 @@
     }
 
     @media (max-width: 360px) {
-      .nav-wm-sub {
-        display: none;
+      .nav-wm-main {
+        font-size: 1.05rem;
       }
 
+      /* Keep "Tours & Travels" visible on very narrow / scaled screens
+         (e.g. Android "Large" display size) — shrink instead of hiding. */
+      .nav-wm-sub {
+        display: block;
+        font-size: 0.44rem;
+        letter-spacing: 1.6px;
+      }
+    }
+
+    @media (max-width: 320px) {
       .nav-wm-main {
-        font-size: 1.1rem;
+        font-size: 0.98rem;
+      }
+
+      .nav-wm-sub {
+        font-size: 0.4rem;
+        letter-spacing: 1.2px;
       }
     }
 
