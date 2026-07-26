@@ -3943,13 +3943,15 @@
         }
       });
 
-      // Turn sound on. If the clip is already over, restart it from the top so
-      // the visitor hears it in full; otherwise just unmute in place.
+      // Turn sound on. Whenever sound is switched on (an actual unmute, or the
+      // clip had finished), restart from the very beginning so the visitor
+      // hears it in full. If it's already playing with sound, leave it alone.
       function enableSound() {
+        var wasMuted = video.muted;
         soundEnabled = true;
         video.muted = false;
         video.volume = 1.0;
-        if (finished || video.ended) {
+        if (wasMuted || finished || video.ended) {
           finished = false;
           playsDone = 0;
           video.currentTime = 0;
