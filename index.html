@@ -1745,9 +1745,17 @@
 
     .footer-bottom {
       margin-top: 52px;
-      padding: 18px 0;
+      padding: 20px 0;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       text-align: center;
+    }
+
+    .footer-bottom-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 26px;
+      flex-wrap: wrap;
     }
 
     .footer-bottom p {
@@ -1758,6 +1766,87 @@
 
     .footer-bottom span {
       color: var(--orange);
+    }
+
+    /* Developer signature */
+    .footer-credit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .footer-credit .credit-sep {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      flex-shrink: 0;
+    }
+
+    .credit-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .credit-link:hover {
+      opacity: 0.82;
+      transform: translateY(-1px);
+    }
+
+    .credit-li {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 5px;
+      background: #0A66C2;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(10, 102, 194, 0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .credit-li svg {
+      width: 11px;
+      height: 11px;
+      display: block;
+      fill: currentColor;
+    }
+
+    .credit-link:hover .credit-li {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 13px rgba(10, 102, 194, 0.6);
+    }
+
+    .credit-name {
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: var(--gold);
+    }
+
+    .credit-place {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: rgba(255, 255, 255, 0.32);
+    }
+
+    @media (max-width: 767px) {
+      .footer-bottom-inner {
+        justify-content: center;
+        text-align: center;
+      }
     }
 
     /* ════════════════════════════════════════
@@ -3753,8 +3842,21 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="container">
-        <p>© 2025 <span>Shri Narayan Tours &amp; Travels</span>. All rights reserved. Crafted with ❤️ in Ahmedabad.</p>
+      <div class="container footer-bottom-inner">
+        <p>© 2025 <span>Shri Narayan Tours &amp; Travels</span>. All rights reserved.</p>
+        <p class="footer-credit">
+          <i class="fas fa-code" style="color:var(--orange);font-size:0.72rem;"></i>
+          Designed &amp; Developed by
+          <a href="https://www.linkedin.com/in/alark-prajapati" target="_blank" rel="noopener"
+            class="credit-link" aria-label="Alark Prajapati on LinkedIn">
+            <span class="credit-name">Alark Prajapati</span>
+            <span class="credit-li" aria-hidden="true">
+              <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+            </span>
+          </a>
+          <span class="credit-sep"></span>
+          <span class="credit-place">Crafted in Ahmedabad 🇮🇳</span>
+        </p>
       </div>
     </div>
   </footer>
